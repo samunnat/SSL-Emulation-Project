@@ -22,10 +22,11 @@ from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
+from Crypto.Random import random
 
-iv = b"G4XO4L\X<J;MPPLD"
+#iv = "G4XO4L\X<J;MPPLD"
+iv = Random.new().read(16)
 print(type(iv), "iv")
-
 host = "localhost"
 port = 10001
 
@@ -36,7 +37,7 @@ def pad_message(message):
     return message+addOn
 
 def unpad_message(m):
-	return m[:-ord(m[len(m)-1:])]
+	return m.rstrip()
 
 # TODO: Generate a random AES key
 # done
@@ -58,17 +59,17 @@ def encrypt_message(message, session_key):
 
 	# MODE_CBC = cipher block chaining
 	cipher = AES.new(session_key, AES.MODE_CBC, iv)
-	return base64.b64encode(iv + cipher.encrypt(padded_message))
+	return base64.b64encode(cipher.encrypt(padded_message))
 
 
 # TODO: Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     decoded_message = base64.b64decode(message)
-    iv = decoded_message[:16]
-    print(iv, "iv")
-    cipher = AES.new(session_key, AES.MODE_CBC, iv)
-    return unpad_message(cipher.decrypt(decoded_message[16:])).decode('utf-8')
+    print("decoded_message", decoded_message)
 
+    cipher = AES.new(session_key, AES.MODE_CBC, iv)
+    decrypted_message = cipher.decrypt(decoded_message)
+    return unpad_message(decrypted_message).decode('utf-8')
 
 # Sends a message over TCP
 def send_message(sock, message):
@@ -110,7 +111,6 @@ def main():
        	print("encrypted message", encrypted_message)
 
        	decrypted_message = decrypt_message(encrypted_message, aes_key)
-
        	print("decrypted_message", decrypted_message)
         """
         # TODO: Initiate handshake
