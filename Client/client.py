@@ -46,9 +46,13 @@ def generate_key():
 # TODO: Takes an AES session key and encrypts it using the server's
 # TODO: public key and returns the value
 def encrypt_handshake(session_key):
-	pubRSAKey = RSA.importKey(open('id_rsa.pub','r').read())
-	cipher = PKCS1_OAEP.new(pubRSAKey)
-	return cipher.encrypt(session_key)
+    keystring = ""
+    with open('id_rsa.pub', 'r') as f:
+        keystring = f.readline().split(" ")[1]
+
+    pubRSAKey = RSA.importKey(open('id_rsa.pub','r').read())
+    cipher = PKCS1_OAEP.new(pubRSAKey)
+    return cipher.encrypt(session_key)
 
 
 # TODO: Encrypts the message using AES. Same as server function
