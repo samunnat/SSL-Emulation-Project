@@ -24,9 +24,7 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from Crypto.Random import random
 
-#iv = "G4XO4L\X<J;MPPLD"
-iv = Random.new().read(16)
-print(type(iv), "iv")
+iv = "G4XO4L\X<J;MPPLD"
 host = "localhost"
 port = 10001
 
@@ -65,7 +63,6 @@ def encrypt_message(message, session_key):
 # TODO: Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     decoded_message = base64.b64decode(message)
-    print("decoded_message", decoded_message)
 
     cipher = AES.new(session_key, AES.MODE_CBC, iv)
     decrypted_message = cipher.decrypt(decoded_message)
@@ -108,13 +105,11 @@ def main():
         message = "Hello, fella"
 
        	encrypted_message = encrypt_message(message, aes_key)
-       	print("encrypted message", encrypted_message)
 
        	decrypted_message = decrypt_message(encrypted_message, aes_key)
-       	print("decrypted_message", decrypted_message)
         """
         # TODO: Initiate handshake
-        send_message()
+        send_message()d
 
         # Listen for okay from server (why is this necessary?)
         if receive_message(sock).decode() != "okay":
