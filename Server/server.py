@@ -49,12 +49,20 @@ def decrypt_key(session_key):
 
 # TODO: Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
-    pass
+    decoded_message = base64.b64decode(message)
+
+    cipher = AES.new(session_key, AES.MODE_CBC, iv)
+    decrypted_message = cipher.decrypt(decoded_message)
+    return unpad_message(decrypted_message).decode('utf-8')
 
 
 # TODO: Encrypt a message using the session key
 def encrypt_message(message, session_key):
-    pass
+    padded_message = pad_message(message)
+
+    # MODE_CBC = cipher block chaining
+    cipher = AES.new(session_key, AES.MODE_CBC, iv)
+    return base64.b64encode(cipher.encrypt(padded_message))
 
 
 # Receive 1024 bytes from the client

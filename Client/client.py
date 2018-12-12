@@ -83,10 +83,9 @@ def receive_message(sock):
 
 
 def main():
-    #user = input("What's your username? ")
-    #password = input("What's your password? ")
+    user = input("What's your username? ")
+    password = input("What's your password? ")
 
-    """
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -94,10 +93,10 @@ def main():
     server_address = (host, port)
     print('connecting to {} port {}'.format(*server_address))
     sock.connect(server_address)
-	"""
+	
     try:
         # Message that we need to send
-        #message = user + ' ' + password
+        message = user + ' ' + password
 
         # TODO: Generate random AES key
         aes_key = generate_key()
@@ -111,9 +110,9 @@ def main():
 
        	decrypted_message = decrypt_message(encrypted_message, aes_key)
            
-        """
+        
         # TODO: Initiate handshake
-        send_message()
+        send_message(encrypted_session_key)
 
         # Listen for okay from server (why is this necessary?)
         if receive_message(sock).decode() != "okay":
@@ -121,14 +120,14 @@ def main():
             exit(0)
 
         # TODO: Encrypt message and send to server
+        send_message(encrypt_message)
 
         # TODO: Receive and decrypt response from server and print
-        """
+        
 
     finally:
         print('closing socket')
-        #sock.close()
-
+        sock.close()
 
 
 if __name__ in "__main__":
