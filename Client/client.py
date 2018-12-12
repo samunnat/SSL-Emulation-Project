@@ -29,11 +29,13 @@ host = "localhost"
 port = 10001
 
 
-# A helper function that you may find useful for AES encryption
+# Pads message with enough space to make its length a multiple of 16
 def pad_message(message):
     addOn = " "*((16-len(message))%16)
     return message+addOn
 
+# removes spaces from the end (see pad_message description)
+# however, if message intentionally had spaces at the end ... tough
 def unpad_message(m):
 	return m.rstrip()
 
@@ -46,10 +48,7 @@ def generate_key():
 # TODO: Takes an AES session key and encrypts it using the server's
 # TODO: public key and returns the value
 def encrypt_handshake(session_key):
-    keystring = ""
-    with open('id_rsa.pub', 'r') as f:
-        keystring = f.readline().split(" ")[1]
-
+    # ALL of id_rsa.pub is the public key
     pubRSAKey = RSA.importKey(open('id_rsa.pub','r').read())
     cipher = PKCS1_OAEP.new(pubRSAKey)
     return cipher.encrypt(session_key)
@@ -111,9 +110,10 @@ def main():
        	encrypted_message = encrypt_message(message, aes_key)
 
        	decrypted_message = decrypt_message(encrypted_message, aes_key)
+           
         """
         # TODO: Initiate handshake
-        send_message()d
+        send_message()
 
         # Listen for okay from server (why is this necessary?)
         if receive_message(sock).decode() != "okay":

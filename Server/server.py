@@ -12,8 +12,17 @@
 
 
 """
-
+import base64
+import hashlib
+import hashlib
+import os
 import socket
+import uuid
+from Crypto import Random
+from Crypto.Cipher import AES
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
+from Crypto.Random import random
 
 iv = "G4XO4L\X<J;MPPLD"
 
@@ -21,15 +30,22 @@ host = "localhost"
 port = 10001
 
 
-# A helper function. It may come in handy when performing symmetric encryption
+# Pads message with enough space to make its length a multiple of 16
 def pad_message(message):
-    return message + " " * ((16 - len(message)) % 16)
+    addOn = " "*((16-len(message))%16)
+    return message+addOn
 
+# removes spaces from the end (see pad_message description)
+# however, if message intentionally had spaces at the end ... tough
+def unpad_message(m):
+    return m.rstrip()
 
 # TODO: Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
-    pass
-
+    private_key = RSA.importKey(open('id_rsa', 'r').read())
+    verifier = PKCS1_OAEP.new(private_key)
+    decrypted_key = private_key.decrypt(session_key)
+    return decrypted_key
 
 # TODO: Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
@@ -124,7 +140,6 @@ def main():
                 connection.close()
     finally:
         sock.close()
-
 
 if __name__ in "__main__":
     main()
