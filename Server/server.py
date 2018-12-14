@@ -43,7 +43,8 @@ def unpad_message(m):
 # TODO: Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
     private_key = RSA.importKey(open('id_rsa', 'r').read())
-    return private_key.decrypt(session_key)
+    encrypted_tuple = eval(session_key)
+    return private_key.decrypt(encrypted_tuple)
 
 # TODO: Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):

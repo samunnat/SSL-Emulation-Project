@@ -50,7 +50,8 @@ def generate_key():
 def encrypt_handshake(session_key):
     # ALL of id_rsa.pub is the public key
     pubRSAKey = RSA.importKey(open('id_rsa.pub','r').read())
-    return pubRSAKey.encrypt(session_key, 32)
+    encrypted_key = str(pubRSAKey.encrypt(session_key, 32))
+    return encrypted_key
 
 # TODO: Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
