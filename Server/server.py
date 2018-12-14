@@ -43,13 +43,11 @@ def unpad_message(m):
 # TODO: Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
     private_key = RSA.importKey(open('id_rsa', 'r').read())
-    verifier = PKCS1_OAEP.new(private_key)
-    decrypted_key = private_key.decrypt(session_key)
-    return decrypted_key
+    return private_key.decrypt(session_key)
 
 # TODO: Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
-    decoded_message = base64.b64decode(message)
+    decoded_message = base64.b64decode(client_message)
 
     cipher = AES.new(session_key, AES.MODE_CBC, iv)
     decrypted_message = cipher.decrypt(decoded_message)
@@ -115,14 +113,15 @@ def main():
             try:
                 print('connection from', client_address)
 
-                # Receive encrypted key from client
-                encrypted_key = receive_message(connection)
+                # Receive public-key encrypted aes-key from client
+                encrypted_aes_key = receive_message(connection)
 
                 # Send okay back to client
                 send_message(connection, "okay")
 
                 # Decrypt key from client
-                plaintext_key = decrypt_key(encrypted_key)
+                plaintext_key = decrypt_key(encrypted_aes_key)
+                print("server aes key", plaintext_key)
 
                 # Receive encrypted message from client
                 ciphertext_message = receive_message(connection)

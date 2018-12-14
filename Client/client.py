@@ -50,9 +50,7 @@ def generate_key():
 def encrypt_handshake(session_key):
     # ALL of id_rsa.pub is the public key
     pubRSAKey = RSA.importKey(open('id_rsa.pub','r').read())
-    cipher = PKCS1_OAEP.new(pubRSAKey)
-    return cipher.encrypt(session_key)
-
+    return pubRSAKey.encrypt(session_key, 32)
 
 # TODO: Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
@@ -73,6 +71,11 @@ def decrypt_message(message, session_key):
 
 # Sends a message over TCP
 def send_message(sock, message):
+    if not message:
+        print("Can't send empty string")
+        return
+    if type(message) != bytes:
+        message = message.encode()
     sock.sendall(message)
 
 
@@ -83,6 +86,7 @@ def receive_message(sock):
 
 
 def main():
+
     user = input("What's your username? ")
     password = input("What's your password? ")
 
@@ -100,30 +104,30 @@ def main():
 
         # TODO: Generate random AES key
         aes_key = generate_key()
+        print("client aes key", aes_key)
 
         # TODO: Encrypt the session key using server's public key
         encrypted_session_key = encrypt_handshake(aes_key)
-
-        message = "Hello, fella"
-
+        
+        # encrypting user info using aes key
        	encrypted_message = encrypt_message(message, aes_key)
 
-       	decrypted_message = decrypt_message(encrypted_message, aes_key)
-           
-        
         # TODO: Initiate handshake
-        send_message(encrypted_session_key)
+        send_message(sock, encrypted_session_key)
 
         # Listen for okay from server (why is this necessary?)
         if receive_message(sock).decode() != "okay":
             print("Couldn't connect to server")
             exit(0)
-
+    
         # TODO: Encrypt message and send to server
-        send_message(encrypt_message)
+        send_message(sock, encrypted_message)
 
         # TODO: Receive and decrypt response from server and print
-        
+        # should be getting back encrypted aes key
+        received_message = receive_message(sock)
+        if received_message:
+            print("client received_message", received_message.decode())
 
     finally:
         print('closing socket')
