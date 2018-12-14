@@ -88,9 +88,13 @@ def verify_hash(user, password):
         for line in reader.read().split('\n'):
             line = line.split("\t")
             if line[0] == user:
-                pass
-                # TODO: Salt password, compute hash, compare, and return
-                # TODO: true if authenticated, false otherwise
+                salt_string = line[1]
+                hashed_password = hashlib.sha512((password + salt_string).encode()).hexdigest()
+
+                print("hashed password", hashed_password)
+                print("should be", line[2])
+
+                return hashed_password == line[2]
         reader.close()
     except FileNotFoundError:
         return False
@@ -129,7 +133,7 @@ def main():
 
                 # Decrypt message from client
                 plaintext_message = decrypt_message(ciphertext_message, plaintext_key)
-                print(plaintext_message)
+                print("server got", plaintext_message)
 
                 # Split response from user into the username and password
                 user, password = plaintext_message.split()
@@ -137,7 +141,7 @@ def main():
                     plaintext_response = "User successfully authenticated!"
                 else:
                     plaintext_response = "Password or username incorrect"
-
+                print("amhere")
                 # Encrypt response to client
                 ciphertext_response = encrypt_message(plaintext_response, plaintext_key)
 

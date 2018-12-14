@@ -128,7 +128,7 @@ def main():
         # should be getting back encrypted aes key
         received_message = receive_message(sock)
         if received_message:
-            print("client received_message", received_message.decode())
+            print("client received_message", decrypt_message(received_message, aes_key))
 
     finally:
         print('closing socket')
