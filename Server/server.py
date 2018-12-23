@@ -90,10 +90,6 @@ def verify_hash(user, password):
             if line[0] == user:
                 salt_string = line[1]
                 hashed_password = hashlib.sha512((password + salt_string).encode()).hexdigest()
-
-                print("hashed password", hashed_password)
-                print("should be", line[2])
-
                 return hashed_password == line[2]
         reader.close()
     except FileNotFoundError:
@@ -126,14 +122,12 @@ def main():
 
                 # Decrypt key from client
                 plaintext_key = decrypt_key(encrypted_aes_key)
-                print("server aes key", plaintext_key)
 
                 # Receive encrypted message from client
                 ciphertext_message = receive_message(connection)
 
                 # Decrypt message from client
                 plaintext_message = decrypt_message(ciphertext_message, plaintext_key)
-                print("server got", plaintext_message)
 
                 # Split response from user into the username and password
                 user, password = plaintext_message.split()
@@ -141,7 +135,6 @@ def main():
                     plaintext_response = "User successfully authenticated!"
                 else:
                     plaintext_response = "Password or username incorrect"
-                print("amhere")
                 # Encrypt response to client
                 ciphertext_response = encrypt_message(plaintext_response, plaintext_key)
 

@@ -105,7 +105,6 @@ def main():
 
         # TODO: Generate random AES key
         aes_key = generate_key()
-        print("client aes key", aes_key)
 
         # TODO: Encrypt the session key using server's public key
         encrypted_session_key = encrypt_handshake(aes_key)
@@ -133,7 +132,6 @@ def main():
     finally:
         print('closing socket')
         sock.close()
-
 
 if __name__ in "__main__":
     main()
